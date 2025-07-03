@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import UsersList from './components/UsersList';
+import UserRegisterForm from './components/UserRegisterForm';
 
 function App() {
   const [name, setName] = useState('');
@@ -37,6 +38,10 @@ function App() {
       <h3>◆Training 3</h3>
       <h1>ユーザーリスト</h1>
       <UsersList />
+
+      <h3>◆Training 4</h3>
+      <h1>新規ユーザー登録</h1>
+      <UserRegisterForm />
     </div>
   );
 }
