@@ -7,13 +7,13 @@ const UsersList = () => {
    if (!users) return <p>読み込み中...</p>;
 
    return (
-      <ul>
+      <ol>
         {users.map((user) => (
           <li key={user.id}>
             名前： {user.name}　メールアドレス： {user.email}
           </li>
         ))}
-      </ul>
+      </ol>
    );
 };
 
