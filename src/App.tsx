@@ -1,5 +1,6 @@
 import HelloMessage from './components/HelloMessage';
 import UserList from './components/UserList';
+// 2つのコンポーネントをAppでまとめて表示する
 
 
 function App() {
@@ -9,8 +10,10 @@ function App() {
       <h1>React + Spring Boot連携</h1>
       <HelloMessage />
     
-      <hr />
+      {/* 区切り線 */}
+      <hr /> 
 
+      {/* ユーザー一覧を表示する画面 */}
       <UserList />
     </div>
   );

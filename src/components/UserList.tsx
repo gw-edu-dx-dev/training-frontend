@@ -1,23 +1,30 @@
-import {useEffect, useState} from "react";
+import {useEffect, useState} from "react";  
+//ReactからuseState（状態管理）とuseEffect(副作用処理)を取り出している
+// これにより、コンポーネント内で「値の保存」や「画面表示後のデータ取得」ができる
 
-type User = {
+//SpringBootから帰ってくるJSONの形に合わせてUser型を定義している
+type User = { 
     id : number;
     name: String;
     email: String;
 };
 
-function UserList(){
-    const [users, setUsers] = useState<User[]>([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState<String | null>(null);
+//Reactの関数コンポーネント
+function UserList(){ 
+    //状態管理
+    const [users, setUsers] = useState<User[]>([]); //ユーザー一覧（初期値は空）
+    const [loading, setLoading] = useState(true); //データ取得中はtrue、終わったらfalse
+    const [error, setError] = useState<String | null>(null); //エラーが起きたらエラーメッセージをセットするための状態
 
-    useEffect(() => {
+    //userEffectで画面表示された瞬間にAPIをたたく
+    useEffect(() => { 
         const fetchUsers = async () => {
         try{
             const response = await fetch("http://localhost:8080/api/users");
             if(!response.ok){
                 throw new Error("ユーザー一覧の取得に失敗しました");
             }
+            //JSONをパースしてUser[]として受け取りusersにセットする
             const data: User[] = await response.json();
             setUsers(data);
         }catch(err){
@@ -27,7 +34,9 @@ function UserList(){
             setLoading(false);
         }
     };
-    fetchUsers();
+    
+    //useEffectの実行（初回表示の1回だけ動く）
+    fetchUsers(); 
     },[]);
 
     if(loading){
@@ -50,7 +59,7 @@ function UserList(){
                     </tr>
                 </thead>
                 <tbody>
-                    {users.map((user)=> (
+                    {users.map((user)=> ( //mapで繰り返し表示
                         <tr key={user.id}>
                             <td>{user.id}</td>
                             <td>{user.name}</td>
@@ -63,4 +72,4 @@ function UserList(){
     );
 }
 
-export default UserList;
+export default UserList; //他のファイルで使えるようにする
