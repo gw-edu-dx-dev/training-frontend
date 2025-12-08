@@ -1,21 +1,27 @@
-import HelloMessage from './components/HelloMessage';
+import { BrowserRouter, Routes, Route,Link } from "react-router-dom"; 
 import UserList from './components/UserList';
-// 2つのコンポーネントをAppでまとめて表示する
+import NewUserForm from './components/NewUserForm';
 
 
 function App() {
 
   return (
-    <div>
-      <h1>React + Spring Boot連携</h1>
-      <HelloMessage />
-    
-      {/* 区切り線 */}
-      <hr /> 
+    <BrowserRouter>
+      <header style={{padding: "8px",borderBottom: "1px solid #ccc"}}>
+        <h1>ユーザー管理デモ</h1>
+        <nav style={{display: "flex", gap: "8px"}}>
+          <Link to="/">ユーザー一覧</Link>
+          <Link to="/users/new">新規ユーザー登録</Link>
+        </nav>
+      </header>
 
-      {/* ユーザー一覧を表示する画面 */}
-      <UserList />
-    </div>
+      <main style={{padding:"16px"}}>
+        <Routes>
+          <Route path="/" element={<UserList />} />
+          <Route path="/users/new" element={<NewUserForm />} />
+        </Routes>
+      </main>
+    </BrowserRouter>
   );
 }
 

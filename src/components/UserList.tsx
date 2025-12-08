@@ -1,12 +1,13 @@
 import {useEffect, useState} from "react";  
+import { Link } from "react-router-dom";
 //ReactからuseState（状態管理）とuseEffect(副作用処理)を取り出している
 // これにより、コンポーネント内で「値の保存」や「画面表示後のデータ取得」ができる
 
 //SpringBootから帰ってくるJSONの形に合わせてUser型を定義している
 type User = { 
     id : number;
-    name: String;
-    email: String;
+    name: string;
+    email: string;
 };
 
 //Reactの関数コンポーネント
@@ -44,7 +45,12 @@ function UserList(){
     }
 
     if(error){
-        return <p> {error}</p>
+        return (
+            <div>
+                <p>{error}</p>
+                <Link to="/users/new">新規ユーザー登録へ</Link>
+            </div>
+        );
     }
 
     return(
