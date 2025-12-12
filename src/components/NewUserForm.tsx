@@ -6,21 +6,24 @@ import { Link } from "react-router-dom";
 type NewUserFormData = {
   name: string;
   email: string;
+  password: string;
 };
 
 type NewUserResponse = {
   id: number;
   name: string;
-  email: string; // ← SVGAnimatedString ではなく string に修正
+  email: string; 
+  password: string;
 };
 
 function NewUserForm() {
   const [form, setForm] = useState<NewUserFormData>({
     name: "",
     email: "",
+    password: ""
   });
 
-  const [errors, setErrors] = useState<{ name?: string; email?: string }>({});
+  const [errors, setErrors] = useState<{ name?: string; email?: string; password?: string }>({});
   const [message, setMessage] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
 
@@ -35,7 +38,7 @@ function NewUserForm() {
 
   // フロント側のバリデーション
   const validate = (): { name?: string; email?: string } => {
-    const newErrors: { name?: string; email?: string } = {};
+    const newErrors: { name?: string; email?: string; password?: string } = {};
 
     if (!form.name.trim()) {
       newErrors.name = "名前は必須です";
@@ -48,6 +51,10 @@ function NewUserForm() {
       if (!emailRegex.test(form.email)) {
         newErrors.email = "メールアドレスの形式が正しくありません";
       }
+    }
+
+    if (!form.password.trim()) {
+      newErrors.password = "パスワードは必須です";
     }
     return newErrors;
   };
@@ -75,6 +82,7 @@ function NewUserForm() {
         body: JSON.stringify(form),
       });
 
+      // 200以外が発生した場合
       if (!response.ok) {
         throw new Error("ユーザー登録に失敗しました");
       }
@@ -83,7 +91,7 @@ function NewUserForm() {
 
       setMessage(`ユーザー「${data.name}」(ID:${data.id})を登録しました`);
       // フォームをクリア
-      setForm({ name: "", email: "" });
+      setForm({ name: "", email: "" ,password: ""});
     } catch (error) {
       console.error(error);
       setMessage("エラーが発生しました。もう一度お試しください。");
@@ -121,6 +129,19 @@ function NewUserForm() {
             />
           </label>
           {errors.email && <div style={{ color: "red" }}>{errors.email}</div>}
+        </div>
+
+        <div>
+          <label>
+            パスワード：
+            <input
+              type="text"
+              name="password"
+              value={form.password}
+              onChange={handleChange}
+            />
+          </label>
+          {errors.password && <div style={{ color: "red" }}>{errors.email}</div>}
         </div>
 
         <button type="submit" disabled={submitting}>
