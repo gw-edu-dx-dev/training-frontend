@@ -1,47 +1,39 @@
 import React from 'react';
 
+type User = {
+  id: number;
+  name: string;
+  email: string;
+};
+
 function App() {
-  const[name, setName] = React.useState('');
-  const[message, setMessage] = React.useState('');
-  const[error, setError] = React.useState('');
+  const [users, setUsers] = React.useState<User[]>([]);
 
-  const handlesubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+  //非同期処理をasync/awaitで行っている
+  React.useEffect(() => {
+    const getUsers = async () => {
+      const respose = await fetch('http://localhost:8080/api/users');
+      const data = await respose.json();
+      setUsers(data);
+    };
 
-     if (name.trim() === '') {
-    setError('名前を入力してください');
-    setMessage('');
-    return;
-  }
-
-
-  setError('');
-
-    const response = await fetch(
-      `http://localhost:8080/api/hello?name=${name}`
-    );
-
-    const text = await response.text();
-    setMessage(text);
-  };
+    getUsers();
+  },[]);//引数に空配列を渡すことで、初回レンダリングのときだけ実行される
 
   return (
-    <div>
-      <h3>名前呼び出し</h3>
-      <form onSubmit={handlesubmit}>
-        <input
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-        />
-        <button type="submit">送信</button>
-      </form>
+    <>
+      <h1>User一覧画面</h1>
 
-      {error && <p>{error}</p>}
-
-      <p>{message}</p>
-    
-    </div>
+      <ul>
+        {/* usersをmap関数でループして、ユーザーの情報を表示する */}
+        {users.map((user) => (
+          //idをkeyとして、ユーザーの名前とメールアドレスを表示する
+          <li key={user.id}>
+            {user.name} ({user.email})
+          </li>
+        ))}
+      </ul>
+    </>
   );
 }
-
-export default App;
+ export default App;
