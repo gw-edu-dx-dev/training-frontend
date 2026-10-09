@@ -14,7 +14,10 @@ function App() {
   const [loginId, setLoginId] = React.useState('');
   const [password, setPassword] = React.useState('');
   const [registerMessage, setRegisterMessage] = React.useState('');
-  
+  const [loginUserId, setLoginUserId] = React.useState('');
+  const [loginPassword, setLoginPassword] = React.useState('');
+  const [loginMessage, setLoginMessage] = React.useState('');
+
   const handlesubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
@@ -69,6 +72,31 @@ function App() {
   const text = await response.text();
   setRegisterMessage(text);
   };
+  
+  const loginUser = async () => {
+    if (loginUserId.trim() === '' || loginPassword.trim() === '') {
+      setLoginMessage('ログインIDとパスワードを入力してください');
+      return;
+    }
+
+    try {
+      const response = await fetch('http://localhost:8080/api/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          loginId: loginUserId,
+          password: loginPassword,
+        }),
+      });
+
+      const text = await response.text();
+      setLoginMessage(text);
+    } catch {
+      setLoginMessage('サーバーに接続できませんでした');
+    }
+  };
 
     return (
     <div>
@@ -122,6 +150,31 @@ function App() {
         <button type="button" onClick={registerUser}>登録</button>
       </form>
       <p>{registerMessage}</p>
+      
+      <h3>ログイン</h3>
+      <form onSubmit={(e) => {
+        e.preventDefault();
+        loginUser();
+      }}>
+        <div>
+          <label>ログインID:</label>
+          <input
+            value={loginUserId}
+            onChange={(e) => setLoginUserId(e.target.value)}
+          />
+        </div>
+        <div>
+          <label>パスワード:</label>
+          <input
+            type="password"
+            value={loginPassword}
+            onChange={(e) => setLoginPassword(e.target.value)}
+          />
+        </div>
+        <button type="submit">ログイン</button>
+      </form>
+      <p>{loginMessage}</p>
+
     </div>
   );
 }
