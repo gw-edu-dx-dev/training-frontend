@@ -1,10 +1,20 @@
 import React from 'react';
 
-function App() {
-  const[name, setName] = React.useState('');
-  const[message, setMessage] = React.useState('');
-  const[error, setError] = React.useState('');
+type User = {
+  id: number;
+  name: string;
+};
 
+function App() {
+  const [name, setName] = React.useState('');
+  const [message, setMessage] = React.useState('');
+  const [error, setError] = React.useState('');
+  const [users, setUsers] = React.useState<User[]>([]);
+  const [registerName, setRegisterName] = React.useState('');
+  const [loginId, setLoginId] = React.useState('');
+  const [password, setPassword] = React.useState('');
+  const [registerMessage, setRegisterMessage] = React.useState('');
+  
   const handlesubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
@@ -13,7 +23,6 @@ function App() {
     setMessage('');
     return;
   }
-
 
   setError('');
 
@@ -24,8 +33,44 @@ function App() {
     const text = await response.text();
     setMessage(text);
   };
+    const getusers = async () => {
+      const response = await fetch(
+        'http://localhost:8080/api/users'
+      );
 
-  return (
+      const data: User[] = await response.json();
+      setUsers(data);
+    };
+
+  const registerUser = async () => {
+    if (
+      registerName.trim() === '' || 
+      loginId.trim() === '' || 
+      password.trim() === ''
+    ) {
+      setRegisterMessage('すべてのフィールドを入力してください');
+      return;
+    }
+    const response = await fetch(
+      'http://localhost:8080/api/register',
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+
+      body: JSON.stringify({
+        name: registerName,
+        loginId: loginId,
+        password: password,
+      })
+    }
+  );
+  const text = await response.text();
+  setRegisterMessage(text);
+  };
+
+    return (
     <div>
       <h3>名前呼び出し</h3>
       <form onSubmit={handlesubmit}>
@@ -39,7 +84,44 @@ function App() {
       {error && <p>{error}</p>}
 
       <p>{message}</p>
-    
+      <h3>ユーザー一覧</h3>
+      <button onClick={getusers}>ユーザー一覧を取得
+      </button>
+      <ul>
+        {users.map((user) => (
+          <li key={user.id}>
+            ID: {user.id} 名前: {user.name}
+          </li>
+        ))}
+      </ul>
+        <h3>新規ユーザー登録</h3>
+      <form>
+        <div>
+          <label>名前:</label>
+          <input
+            value={registerName}
+            onChange={(e) => setRegisterName(e.target.value)}
+          />
+        </div>
+        <div>
+          <label>ログインID:</label>
+          <input
+            value={loginId}
+            onChange={(e) => setLoginId(e.target.value)}
+          /> 
+        </div>
+
+        <div>
+          <label>パスワード:</label>
+          <input
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+        </div>
+        <button type="button" onClick={registerUser}>登録</button>
+      </form>
+      <p>{registerMessage}</p>
     </div>
   );
 }
